@@ -1,0 +1,12 @@
+# ~/.tmuxinator/strands.yml
+
+name: strands
+root: ~/
+pre_window: source `rospack find strands_bringup`/conf/env_vars.sh
+windows:
+  - ros: roscore
+  - robot: roslaunch --wait strands_bringup strands_robot.launch with_mux:=false with_magnetic_barrier:=false
+  - core: HOSTNAME=$DB_MACHINE roslaunch --wait strands_bringup strands_core.launch machine:=$DB_MACHINE user:=$RUNTIME_USER db_path:=$DB_PATH
+  - navigation: roslaunch --wait strands_bringup strands_navigation.launch positionUpdate:=false map:=$NAV_MAP with_no_go_map:=$WITH_NOGO no_go_map:=$NOGO_MAP topological_map:=$TOP_MAP chest_xtion_machine:=$CHEST_CAM_MACHINE
+  - executive: roslaunch --wait task_executor mdp-executor.launch interruptible_wait:=false combined_sort:=true
+  - routine: roslaunch --wait automated_routine automated_routine.launch routine_config:=$ROUTINE_CONFIG
